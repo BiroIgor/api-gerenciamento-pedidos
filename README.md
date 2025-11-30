@@ -27,69 +27,227 @@ API REST desenvolvida em Node.js para gerenciamento de pedidos.
 
 ## 📦 Instalação
 
-### Opção A: Usando Docker (Recomendado)
+### Opção 1: Docker Compose (Recomendado)
 
-Veja o arquivo [DOCKER.md](DOCKER.md) para instruções completas.
+Este método cria tanto a aplicação quanto o banco de dados em containers Docker.
 
-**Quick Start:**
+#### Pré-requisitos
+- Docker instalado
+- Docker Compose instalado (vem com Docker Desktop)
+
+#### Passos:
+
+1. **Verifique se o Docker está instalado:**
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+2. **Inicie tudo com Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+   
+   Isso irá:
+   - Construir a imagem da aplicação Node.js
+   - Criar o container do PostgreSQL
+   - Executar o script SQL automaticamente
+   - Iniciar a aplicação
+
+3. **Acesse a aplicação:**
+   - API: http://localhost:3000
+   - Swagger: http://localhost:3000/api-docs
+   - PostgreSQL: localhost:5432
+
+4. **Para parar:**
+   ```bash
+   docker-compose down
+   ```
+
+5. **Para parar e remover volumes (limpar banco):**
+   ```bash
+   docker-compose down -v
+   ```
+
+#### Comandos úteis do Docker:
 ```bash
-docker-compose up --build
+# Ver logs
+docker-compose logs -f app
+
+# Executar comandos no container
+docker-compose exec app sh
+
+# Reconstruir apenas a aplicação
+docker-compose up --build app
+
+# Ver containers rodando
+docker ps
 ```
 
-### Opção B: Instalação Local
+---
 
-1. Clone o repositório:
-```bash
-git clone <url-do-repositorio>
-cd api-gerenciamento-pedidos
-```
+### Opção 2: Apenas Node.js no Docker (usando PostgreSQL local)
 
-2. Instale as dependências:
-```bash
-npm install
-```
+Use se você já tem PostgreSQL rodando localmente.
 
-3. Configure as variáveis de ambiente:
-```bash
-cp .env.example .env
-```
+1. **Crie a imagem:**
+   ```bash
+   docker build -t jitterbit-order-api .
+   ```
 
-Edite o arquivo `.env` com suas credenciais do PostgreSQL:
-```
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=order_management
-DB_USER=postgres
-DB_PASSWORD=sua_senha
-PORT=3000
-```
+2. **Execute o container:**
+   ```bash
+   docker run -it --rm \
+     -p 3000:3000 \
+     -e DB_HOST=host.docker.internal \
+     -e DB_PORT=5432 \
+     -e DB_NAME=jitterbit_orders \
+     -e DB_USER=postgres \
+     -e DB_PASSWORD=sua_senha \
+     jitterbit-order-api
+   ```
+   
+   Nota: `host.docker.internal` permite que o container acesse serviços na máquina host (Windows/Mac).
 
-4. Crie o banco de dados no PostgreSQL:
-```sql
-CREATE DATABASE order_management;
-```
+---
 
-5. Execute o script SQL para criar as tabelas:
-```bash
-psql -U postgres -d order_management -f Script/11_30_2025_Igor.sql
-```
+### Opção 3: Instalação Local (sem Docker)
 
-Ou execute manualmente o conteúdo do arquivo `Script/11_30_2025_Igor.sql` no seu cliente PostgreSQL.
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/BiroIgor/api-gerenciamento-pedidos.git
+   cd api-gerenciamento-pedidos
+   ```
 
-6. Inicie o servidor:
-```bash
-npm start
-```
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
 
-Para desenvolvimento com auto-reload:
-```bash
-npm run dev
-```
+3. **Configure as variáveis de ambiente:**
+   
+   Copie o arquivo `env.example` para `.env`:
+   ```bash
+   # Windows PowerShell
+   Copy-Item env.example .env
+   
+   # Linux/Mac
+   cp env.example .env
+   ```
+   
+   Edite o arquivo `.env` com suas credenciais do PostgreSQL:
+   ```
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=jitterbit_orders
+   DB_USER=postgres
+   DB_PASSWORD=sua_senha_aqui
+   PORT=3000
+   JWT_SECRET=seu_jwt_secret_aqui
+   ```
+
+4. **Crie o banco de dados no PostgreSQL:**
+   ```sql
+   CREATE DATABASE jitterbit_orders;
+   ```
+
+5. **Execute o script SQL para criar as tabelas:**
+   ```bash
+   # Windows PowerShell
+   psql -U postgres -d jitterbit_orders -f Script/11_30_2025_Igor.sql
+   
+   # Linux/Mac
+   psql -U postgres -d jitterbit_orders -f Script/11_30_2025_Igor.sql
+   ```
+   
+   Ou copie e cole o conteúdo do arquivo `Script/11_30_2025_Igor.sql` no seu cliente PostgreSQL (pgAdmin, DBeaver, etc).
+
+6. **Inicie o servidor:**
+   ```bash
+   npm start
+   ```
+   
+   Para desenvolvimento com auto-reload:
+   ```bash
+   npm run dev
+   ```
 
 ## 📚 Documentação da API
 
+### Swagger/OpenAPI
+
 Após iniciar o servidor, a documentação Swagger estará disponível em:
 **http://localhost:3000/api-docs**
+
+A documentação inclui:
+- Descrição de todos os endpoints
+- Schemas de requisição e resposta
+- Autenticação JWT configurada
+- Testes interativos diretamente na interface
+
+### Collection Postman
+
+O projeto inclui uma collection Postman pronta para uso: `Jitterbit_Order_API.postman_collection.json`
+
+#### 📥 Como Importar
+
+1. Abra o Postman
+2. Clique em **Import** (canto superior esquerdo)
+3. Arraste o arquivo `Jitterbit_Order_API.postman_collection.json` ou clique em **Upload Files**
+4. A collection será importada com todas as requisições configuradas
+
+#### 🔐 Autenticação na Collection
+
+A collection está configurada para usar **Bearer Token JWT** automaticamente.
+
+**Passo a Passo:**
+
+1. **Primeiro, faça login:**
+   - Execute a requisição `Authentication > Login`
+   - Use as credenciais:
+     - Username: `admin`
+     - Password: `admin123`
+   - O token será **automaticamente salvo** na variável `jwt_token`
+
+2. **Todas as outras requisições usarão o token automaticamente**
+
+#### 📋 Endpoints Incluídos na Collection
+
+**Authentication:**
+- ✅ **POST /auth/login** - Login e obtenção de token
+- ✅ **GET /auth/verify** - Verificar token
+
+**Orders:**
+- ✅ **POST /order** - Criar pedido
+- ✅ **GET /order/:orderId** - Buscar pedido por ID
+- ✅ **GET /order/list** - Listar todos os pedidos
+- ✅ **PUT /order/:orderId** - Atualizar pedido
+- ✅ **DELETE /order/:orderId** - Deletar pedido
+
+#### 🔧 Variáveis de Ambiente
+
+A collection usa as seguintes variáveis:
+- `base_url`: `http://localhost:3000` (padrão)
+- `jwt_token`: Token JWT (preenchido automaticamente após login)
+
+**Para alterar a URL base:**
+1. Clique com botão direito na collection
+2. Selecione **Edit**
+3. Vá na aba **Variables**
+4. Altere o valor de `base_url`
+
+#### 🚀 Como Usar
+
+1. **Importe a collection** (veja acima)
+2. **Execute o Login** primeiro
+3. **Execute qualquer endpoint de Orders** - o token será usado automaticamente
+
+#### ⚠️ Importante
+
+- **Sempre execute o Login primeiro** para obter o token
+- O token expira em **24 horas**
+- Se receber erro 401, faça login novamente
+- Todas as rotas de Orders requerem autenticação
 
 ## 🔐 Autenticação
 
@@ -392,4 +550,3 @@ A API retorna códigos HTTP apropriados:
 **Igor Gottscheffsky Pereira**
 - LinkedIn: [igor-gottscheffsky-pereira-b897621a3](https://www.linkedin.com/in/igor-gottscheffsky-pereira-b897621a3/)
 - Telefone: 55 55 991406694
-
