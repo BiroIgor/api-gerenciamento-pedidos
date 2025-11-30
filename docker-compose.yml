@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Aplicação Node.js
+  app:
+    build: .
+    container_name: jitterbit-order-api
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=jitterbit_orders
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+      - PORT=3000
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - jitterbit-network
+
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: jitterbit-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=jitterbit_orders
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Script/11_30_2025_Igor.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - jitterbit-network
+
+volumes:
+  postgres_data:
+
+networks:
+  jitterbit-network:
+    driver: bridge
+

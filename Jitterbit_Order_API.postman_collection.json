@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "jitterbit-order-api-2025",
+		"name": "Jitterbit Order API",
+		"description": "Collection completa da API de gerenciamento de pedidos - Teste Jitterbit",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "igor-gottscheffsky"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"jwt_token\", jsonData.token);",
+									"    console.log(\"Token salvo: \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Faz login e retorna token JWT. O token é automaticamente salvo na variável `jwt_token`."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/verify",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "verify"]
+						},
+						"description": "Verifica se o token JWT é válido"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroPedido\": \"v10089015vdb-01\",\n    \"valorTotal\": 10000,\n    \"dataCriacao\": \"2023-07-19T12:24:11.5299601+00:00\",\n    \"items\": [\n        {\n            \"idItem\": \"2434\",\n            \"quantidadeItem\": 1,\n            \"valorItem\": 1000\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/order",
+							"host": ["{{base_url}}"],
+							"path": ["order"]
+						},
+						"description": "Cria um novo pedido. Requer autenticação JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/order/:orderId",
+							"host": ["{{base_url}}"],
+							"path": ["order", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "v10089016vdb",
+									"description": "ID do pedido"
+								}
+							]
+						},
+						"description": "Busca um pedido pelo ID. Requer autenticação JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/order/list",
+							"host": ["{{base_url}}"],
+							"path": ["order", "list"]
+						},
+						"description": "Lista todos os pedidos. Requer autenticação JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroPedido\": \"v10089016vdb\",\n    \"valorTotal\": 15000,\n    \"dataCriacao\": \"2023-07-20T10:00:00.000Z\",\n    \"items\": [\n        {\n            \"idItem\": \"2434\",\n            \"quantidadeItem\": 2,\n            \"valorItem\": 1500\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/order/:orderId",
+							"host": ["{{base_url}}"],
+							"path": ["order", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "v10089016vdb",
+									"description": "ID do pedido"
+								}
+							]
+						},
+						"description": "Atualiza um pedido existente. Requer autenticação JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/order/:orderId",
+							"host": ["{{base_url}}"],
+							"path": ["order", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "v10089016vdb",
+									"description": "ID do pedido"
+								}
+							]
+						},
+						"description": "Deleta um pedido. Requer autenticação JWT."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

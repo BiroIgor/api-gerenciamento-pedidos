@@ -1,0 +1,14 @@
+node_modules
+.env
+*.log
+.DS_Store
+.git
+.gitignore
+README.md
+SETUP.md
+*.md
+redefinir-*.ps1
+reverter-*.ps1
+test-*.js
+*.txt
+
