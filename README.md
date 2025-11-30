@@ -1,6 +1,6 @@
-# Jitterbit Order API
+# Order Management API
 
-API REST desenvolvida em Node.js para gerenciamento de pedidos, desenvolvida como teste técnico para Jitterbit.
+API REST desenvolvida em Node.js para gerenciamento de pedidos.
 
 ## 📋 Características
 
@@ -41,7 +41,7 @@ docker-compose up --build
 1. Clone o repositório:
 ```bash
 git clone <url-do-repositorio>
-cd "Teste Jitterbit"
+cd api-gerenciamento-pedidos
 ```
 
 2. Instale as dependências:
@@ -58,7 +58,7 @@ Edite o arquivo `.env` com suas credenciais do PostgreSQL:
 ```
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=jitterbit_orders
+DB_NAME=order_management
 DB_USER=postgres
 DB_PASSWORD=sua_senha
 PORT=3000
@@ -66,12 +66,12 @@ PORT=3000
 
 4. Crie o banco de dados no PostgreSQL:
 ```sql
-CREATE DATABASE jitterbit_orders;
+CREATE DATABASE order_management;
 ```
 
 5. Execute o script SQL para criar as tabelas:
 ```bash
-psql -U postgres -d jitterbit_orders -f Script/11_30_2025_Igor.sql
+psql -U postgres -d order_management -f Script/11_30_2025_Igor.sql
 ```
 
 Ou execute manualmente o conteúdo do arquivo `Script/11_30_2025_Igor.sql` no seu cliente PostgreSQL.
@@ -395,5 +395,5 @@ A API retorna códigos HTTP apropriados:
 
 ## 📄 Licença
 
-Este projeto foi desenvolvido como teste técnico para Jitterbit.
+Este projeto foi desenvolvido como estudo de caso técnico.
 
