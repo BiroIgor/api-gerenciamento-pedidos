@@ -393,7 +393,3 @@ A API retorna códigos HTTP apropriados:
 - LinkedIn: [igor-gottscheffsky-pereira-b897621a3](https://www.linkedin.com/in/igor-gottscheffsky-pereira-b897621a3/)
 - Telefone: 55 55 991406694
 
-## 📄 Licença
-
-Este projeto foi desenvolvido como estudo de caso técnico.
-
